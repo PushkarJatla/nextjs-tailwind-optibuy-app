@@ -1,16 +1,38 @@
 import React from 'react';
+import { FaHeart } from 'react-icons/fa';
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, onLike, isLiked }) {
   return (
-    <div className="bg-white p-4 rounded-lg shadow hover:shadow-md transition">
-      <img src={product.image} alt={product.name} className="w-full h-40 object-cover rounded" />
-      <h3 className="text-lg font-semibold mt-2">{product.name}</h3>
-      <p className="text-gray-700">₹{product.price}</p>
-      <p className="text-yellow-500">⭐ {product.rating}</p>
+    <div className="relative bg-white rounded-2xl shadow-lg p-3 flex flex-col items-center transition-transform duration-300 hover:scale-105 hover:shadow-xl border border-gray-200">
+      <div
+        onClick={() => onLike && onLike(product.id)}
+        className="absolute -top-3 -right-3 bg-white rounded-full shadow-md w-10 h-10 flex items-center justify-center cursor-pointer hover:scale-110 transition z-10"
+        title="Like this product"
+      >
+        <FaHeart className={`${isLiked ? 'text-red-500' : 'text-gray-400'} text-lg`} />
+        <span className="absolute -bottom-1 -right-1 bg-white text-xs text-gray-700 font-semibold w-5 h-5 rounded-full flex items-center justify-center border border-gray-300">
+          {product.likes ?? 0}
+        </span>
+      </div>
+
+      <img
+        src={product.imageUrl}
+        alt={product.name}
+        className="w-full h-56 object-cover rounded-xl shadow-md"
+      />
+
+      <h3 className="text-xl font-semibold text-gray-800 mt-4 text-center">
+        {product.name}
+      </h3>
+
+      <div className="mt-2 text-gray-600 text-sm">₹ {product.price}</div>
+      <div className="text-yellow-500 font-medium">⭐ {product.rating}</div>
+
       <a
         href={product.link}
         target="_blank"
-        className="inline-block mt-2 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+        rel="noopener noreferrer"
+        className="mt-4 px-5 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full shadow hover:from-green-600 hover:to-green-700 transition-all duration-300"
       >
         Buy on {product.site}
       </a>

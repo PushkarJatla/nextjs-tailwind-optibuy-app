@@ -1,29 +1,30 @@
-"use client"
-import { useRouter } from "next/navigation"
-import { useState } from 'react'
+"use client";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const router = useRouter();
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    })
+    e.preventDefault();
+
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
 
     if (res.ok) {
-      const data = await res.json()
-      console.log("Logged in:", data)
-      router.push("/home")
+      router.push("/home");
     } else {
-      const text = await res.text()
-      setError(text)
+      setError("Invalid email or password");
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
@@ -57,5 +58,5 @@ export default function LoginPage() {
         </button>
       </form>
     </div>
-  )
+  );
 }

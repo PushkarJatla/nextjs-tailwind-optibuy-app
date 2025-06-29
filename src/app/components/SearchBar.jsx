@@ -13,6 +13,27 @@ const SearchBar = () => {
   const [imageFile, setImageFile] = useState(null);
   const [category, setCategory] = useState('');
 
+  const categories = [
+  "Footwear",
+  "Clothing",
+  "Utensils",
+  "Toys",
+  "Electronics",
+  "Groceries",
+  "Furniture",
+  "Books",
+  "Beauty & Personal Care",
+  "Fitness & Sports",
+  "Mobile Phones",
+  "Kitchen Appliances",
+  "Accessories",
+  "Watches",
+  "Stationery"
+];
+
+
+  const [allProducts, setAllProducts] = useState([]);
+
   const handleSearch = () => {
     console.log(`Searching for "${query}" under ₹${budget}`);
   };
@@ -68,14 +89,14 @@ const SearchBar = () => {
           placeholder="Search product (e.g. Shoes)"
           value={query}
           onChange={e => setQuery(e.target.value)}
-          className="w-full p-2 border rounded"
+          className="w-full bg-white p-2  rounded"
         />
         <input
           type="number"
           placeholder="Max Budget (₹)"
           value={budget}
           onChange={e => setBudget(e.target.value)}
-          className="w-full p-2 border rounded"
+          className="w-full bg-white p-2  rounded"
         />
         <button
           onClick={handleSearch}
@@ -92,36 +113,80 @@ const SearchBar = () => {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg w-full max-w-md p-6">
-            <h2 className="text-xl font-semibold mb-4">Add New Product</h2>
+        <div className="fixed inset-0 bg-[rgba(0,0,0,0.2)] backdrop-blur-sm flex items-center justify-center z-50">
+  <div className="bg-white rounded-xl shadow-2xl border border-blue-100 w-full max-w-lg p-8">
+    <h2 className="text-2xl font-bold text-blue-700 mb-6 border-b pb-2">➕ Add New Product</h2>
 
-            <div className="space-y-3">
-              <input className="w-full p-2 border rounded" placeholder="Product Name" value={name} onChange={e => setName(e.target.value)} />
-              <input className="w-full p-2 border rounded" type="number" placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} />
-              <input className="w-full p-2 border rounded" type="number" step="0.1" placeholder="Rating (1-5)" value={rating} onChange={e => setRating(e.target.value)} />
-              <input className="w-full p-2 border rounded" placeholder="Site (e.g., Amazon)" value={site} onChange={e => setSite(e.target.value)} />
-              <input className="w-full p-2 border rounded" placeholder="Product Link" value={link} onChange={e => setLink(e.target.value)} />
-              <input className="w-full p-2 border rounded" placeholder="Category (e.g., Shoes, Electronics)" value={category} onChange={e => setCategory(e.target.value)} />
-              <input type="file" accept="image/*" className="w-full p-2 border rounded" onChange={e => setImageFile(e.target.files[0])} />
-            </div>
+    <div className="space-y-4">
+      <input
+        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+        placeholder="Product Name"
+        value={name}
+        onChange={e => setName(e.target.value)}
+      />
+      <input
+        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+        type="number"
+        placeholder="Price"
+        value={price}
+        onChange={e => setPrice(e.target.value)}
+      />
+      <input
+        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+        type="number"
+        step="0.1"
+        placeholder="Rating (1-5)"
+        value={rating}
+        onChange={e => setRating(e.target.value)}
+      />
+      <input
+        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+        placeholder="Site (e.g., Amazon)"
+        value={site}
+        onChange={e => setSite(e.target.value)}
+      />
+      <input
+        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+        placeholder="Product Link"
+        value={link}
+        onChange={e => setLink(e.target.value)}
+      />
+     <select
+  className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white"
+  value={category}
+  onChange={(e) => setCategory(e.target.value)}
+>
+  <option value="">Select Category</option>
+  {categories.map((cat) => (
+    <option key={cat} value={cat}>{cat}</option>
+  ))}
+</select>
 
-            <div className="flex justify-end mt-4 gap-2">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAddProduct}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Add
-              </button>
-            </div>
-          </div>
-        </div>
+      <input
+        type="file"
+        
+        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white"
+        onChange={e => setImageFile(e.target.files[0])}
+      />
+    </div>
+
+    <div className="flex justify-end mt-6 gap-3">
+      <button
+        onClick={() => setShowModal(false)}
+        className="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
+      >
+        Cancel
+      </button>
+      <button
+        onClick={handleAddProduct}
+        className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow"
+      >
+        Add
+      </button>
+    </div>
+  </div>
+</div>
+
       )}
     </>
   );

@@ -1,128 +1,131 @@
-// app/page.jsx
 "use client"
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import SearchBar from '../components/SearchBar';
 import ProductCard from '../components/ProductCard'
-const dummyProducts = [
-  {
-    id: 1,
-    name: 'Nike Air Max',
-    image: '/images/shoe1.jpg',
-    price: 999,
-    rating: 4.5,
-    site: 'Amazon',
-    link: 'https://www.amazon.in/',
-  },
-  {
-    id: 2,
-    name: 'Adidas Sneakers',
-    image: '/images/shoe2.jpg',
-    price: 949,
-    rating: 4.2,
-    site: 'Flipkart',
-    link: 'https://www.flipkart.com/',
-  },
-   {
-    id: 3,
-    name: 'Puma Running Shoes',
-    image: '/images/shoe3.jpg',
-    price: 899,
-    rating: 4.0,
-    site: 'Myntra',
-    link: 'https://www.myntra.com/',
-  },
-  {
-    id: 4,
-    name: 'Campus Street Wear',
-    image: '/images/shoe4.jpg',
-    price: 799,
-    rating: 4.1,
-    site: 'AJIO',
-    link: 'https://www.ajio.com/',
-  },
-  {
-    id: 5,
-    name: 'Sparx Casual Shoes',
-    image: '/images/shoe5.jpg',
-    price: 699,
-    rating: 3.9,
-    site: 'Flipkart',
-    link: 'https://www.flipkart.com/',
-  },
-  {
-    id: 6,
-    name: 'Red Tape Sneakers',
-    image: '/images/shoe6.jpg',
-    price: 999,
-    rating: 4.3,
-    site: 'Amazon',
-    link: 'https://www.amazon.in/',
-  },
-  {
-    id: 7,
-    name: 'Bata Formal Shoes',
-    image: '/images/shoe7.jpg',
-    price: 850,
-    rating: 4.0,
-    site: 'AJIO',
-    link: 'https://www.ajio.com/',
-  },
-  {
-    id: 8,
-    name: 'HRX by Hrithik Roshan',
-    image: '/images/shoe8.jpg',
-    price: 950,
-    rating: 4.4,
-    site: 'Myntra',
-    link: 'https://www.myntra.com/',
-  },
-  {
-    id: 9,
-    name: 'Woodland Trekking Boots',
-    image: '/images/shoe9.jpg',
-    price: 999,
-    rating: 4.6,
-    site: 'Amazon',
-    link: 'https://www.amazon.in/',
-  },
-  {
-    id: 10,
-    name: 'ASICS Sports Shoes',
-    image: '/images/shoe10.jpg',
-    price: 990,
-    rating: 4.3,
-    site: 'Myntra',
-    link: 'https://www.myntra.com/',
-  }
-];
+import { FaListUl } from 'react-icons/fa';
+import { useSession } from 'next-auth/react';
 
 export default function HomePage() {
-  const [products, setProducts] = useState(dummyProducts);
- 
-  useEffect(()=>{
-    fetch('/api/products')
-    .then(res=>res.json())
-    .then(data=>setProducts(prev=>[...prev,...data]))
-  },[])
+    const [products, setProducts] = useState([]);
+    const [likedProducts, setLikedProducts] = useState([]);
+    const [showSidebar, setShowSidebar] = useState(false);
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow p-4 text-center text-xl font-bold text-blue-700">🛒 ShopCompare</header>
+    const [selectedCategory, setSelectedCategory] = useState(null);
 
-      <main className="container mx-auto px-4 py-6">
-        <SearchBar/>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 mt-6">
-          {products.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+    useEffect(() => {
+        fetch('/api/products')
+            .then(res => res.json())
+            .then(data => setProducts(data));
+
+        fetch('/api/user/liked-products')
+            .then(res => res.json())
+            .then(data => {
+                console.log("✅ liked-products response:", data);
+                const liked = Array.isArray(data)
+                    ? data
+                    : Array.isArray(data.liked)
+                        ? data.liked
+                        : [];
+
+                setLikedProducts(liked);
+            });
+
+    }, []);
+
+    const handleCategorySelect = async (category) => {
+        setSelectedCategory(category);
+        try {
+            const res = await fetch(`/api/products?category=${encodeURIComponent(category)}`);
+            if (!res.ok) throw new Error(`Failed to fetch products for category: ${category}`);
+            const data = await res.json();
+            setProducts(data);
+        } catch (error) {
+            console.error("❌ Error fetching category products:", error);
+            setProducts([]);
+        }
+    };
+
+    const handleLike = async (productId) => {
+        try {
+            const res = await fetch(`/api/products/${productId}/like`, {
+                method: "POST"
+            });
+            if (res.ok) {
+                setProducts(prev =>
+                    prev.map(p =>
+                        p.id === productId ? { ...p, likes: (p.likes || 0) + 1 } : p
+                    )
+                );
+                setLikedProducts(prev => [...prev, productId]);
+                console.log("likedProducts", likedProducts)
+            } else {
+                const err = await res.json();
+                console.warn("⚠️", err.error);
+            }
+        } catch (err) {
+            console.error("❌ Error while liking:", err);
+        }
+    };
+
+    const categories = [
+        "Shoes", "Clothing", "Utensils", "Toys", "Electronics", "Groceries",
+        "Furniture", "Books", "Beauty & Personal Care", "Fitness & Sports",
+        "Mobile Phones", "Kitchen Appliances", "Accessories", "Watches", "Stationery"
+    ];
+    const { data: session, status } = useSession();
+    console.log("sesseion is ", session); // should show user info
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col">
+            <header className="bg-white shadow p-4 text-center text-2xl font-bold text-blue-700 relative">
+                🛒 OptiBuy
+                <button
+                    className="md:hidden absolute right-4 top-4 text-blue-700 border border-blue-700 px-3 py-1 rounded hover:bg-blue-100 transition"
+                    onClick={() => setShowSidebar(prev => !prev)}
+                >
+                    <FaListUl className="inline mr-2" />
+                    {showSidebar ? 'Close' : 'Categories'}
+                </button>
+            </header>
+
+            <div className="flex items-start">
+                <aside className={`bg-white shadow-xl border border-gray-200 mt-6 w-56 p-5 rounded-tr rounded-br transition-all duration-300 ease-in-out z-20 ${showSidebar ? 'block absolute md:relative' : 'hidden'} md:block`}>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">🗂️ Categories</h3>
+                    <ul className="space-y-3">
+                        <li onClick={() => handleCategorySelect(null)} className={`px-4 py-2 rounded-lg shadow hover:shadow-md cursor-pointer transition-all duration-200 border ${!selectedCategory ? 'bg-blue-100 text-blue-900 border-blue-500 font-semibold' : 'bg-gradient-to-r from-blue-50 to-white text-blue-700 hover:text-blue-900 hover:border-blue-400 border-transparent'}`}>
+                            Show All
+                        </li>
+                        {categories.map((cat, idx) => (
+                            <li key={idx} onClick={() => handleCategorySelect(cat)} className={`px-4 py-2 rounded-lg shadow hover:shadow-md cursor-pointer transition-all duration-200 border ${selectedCategory === cat ? 'bg-blue-100 text-blue-900 border-blue-500 font-semibold' : 'bg-gradient-to-r from-blue-50 to-white text-blue-700 hover:text-blue-900 hover:border-blue-400 border-transparent'}`}>
+                                {cat}
+                            </li>
+                        ))}
+                    </ul>
+                </aside>
+
+                <main className="flex-1 container mx-auto px-4 py-6">
+                    <SearchBar />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+                        {products.map((product) => {
+                            const likedProductIds = new Set(likedProducts || []);
+                            return (
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                    onLike={() => handleLike(product.id)} // ✅ pass ID
+                                    isLiked={likedProductIds.has(product.id)}
+                                />
+
+                            );
+                        })}
+                    </div>
+                </main>
+
+            </div>
+
+            <footer className="bg-white shadow text-center py-3 mt-8 text-sm text-gray-500">
+                © 2025 ShopCompare. All rights reserved.
+            </footer>
         </div>
-        
-      </main>
-
-      
-
-
-      <footer className="bg-white shadow text-center py-3 mt-8 text-sm text-gray-500">© 2025 ShopCompare. All rights reserved.</footer>
-    </div>
-  );
+    );
 }
