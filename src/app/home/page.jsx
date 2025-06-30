@@ -56,7 +56,7 @@ export default function HomePage() {
                         p.id === productId ? { ...p, likes: (p.likes || 0) + 1 } : p
                     )
                 );
-                setLikedProducts(prev => [...prev, productId]);
+                setLikedProducts(prev => (prev.includes(productId) ? prev : [...prev, productId]));
                 console.log("likedProducts", likedProducts)
             } else {
                 const err = await res.json();

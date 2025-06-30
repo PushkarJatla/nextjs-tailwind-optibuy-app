@@ -21,20 +21,29 @@ export const GET = async (req) => {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get('category');
 
-    let products;
-
-    if (category) {
-      products = await prisma.product.findMany({
-        where: {
-          category: {
-            equals: category,
-            mode: 'insensitive', // Case-insensitive match
-          },
-        },
-      });
-    } else {
-      products = await prisma.product.findMany();
-    }
+    const products = await prisma.product.findMany({
+      where: category
+        ? {
+            category: {
+              equals: category,
+              mode: 'insensitive',
+            },
+          }
+        : {},
+      select: {
+        id: true,
+        name: true,
+        imageUrl: true,
+        price: true,
+        rating: true,
+        site: true,
+        link: true,
+        likes: true,
+      },
+      orderBy: {
+        likes: 'desc',
+      },
+    });
 
     return NextResponse.json(products ?? []);
   } catch (error) {

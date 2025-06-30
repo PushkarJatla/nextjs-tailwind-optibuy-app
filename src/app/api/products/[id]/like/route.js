@@ -13,6 +13,7 @@ export async function POST(request, { params }) {
     }
 
     const productId = parseInt(params.id);
+    // console.log("parameter pID : ",productId)
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
     });
@@ -48,6 +49,9 @@ export async function POST(request, { params }) {
       where: { id: productId },
       data: { likes: { increment: 1 } },
     });
+    // const updated = await prisma.product.findUnique({ where: { id: productId } });
+    // console.log("✅ Updated product:", updated);
+
 
     return Response.json({ message: "Liked successfully" });
   } catch (err) {
