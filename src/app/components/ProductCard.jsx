@@ -3,21 +3,22 @@ import { FaHeart } from 'react-icons/fa';
 
 export default function ProductCard({ product, onLike, isLiked }) {
   return (
-    <div className="relative bg-white rounded-2xl shadow-lg p-3 flex flex-col items-center transition-transform duration-300 hover:scale-105 hover:shadow-xl border border-gray-200">
-    <div
-  onClick={() => {
-    if (!isLiked && onLike) onLike(product.id); // ✅ only call if not liked
-  }}
-  className={`absolute -top-3 -right-3 bg-white rounded-full shadow-md w-10 h-10 flex items-center justify-center cursor-pointer hover:scale-110 transition z-10 ${
-    isLiked ? 'pointer-events-none opacity-60' : ''
-  }`}
-  title={isLiked ? "Already liked" : "Like this product"}
->
-  <FaHeart className={`${isLiked ? 'text-red-500' : 'text-gray-400'} text-lg`} />
-  <span className="absolute -bottom-1 -right-1 bg-white text-xs text-gray-700 font-semibold w-5 h-5 rounded-full flex items-center justify-center border border-gray-300">
-    {product.likes ?? 0}
-  </span>
-</div>
+    <div className="relative rounded-2xl shadow-lg p-3 flex flex-col items-center transition-transform duration-300 hover:scale-105 hover:shadow-xl  ring-1 ring-inset ring-green-100
+ bg-gradient-to-br from-white via-green-50 to-emerald-100
+ text-blue-700">
+      <div
+        onClick={() => {
+          if (!isLiked && onLike) onLike(product.id); // ✅ only call if not liked
+        }}
+        className={`absolute -top-3 -right-3 bg-white rounded-full shadow-md w-10 h-10 flex items-center justify-center cursor-pointer hover:scale-110 transition z-10 ${isLiked ? 'pointer-events-none opacity-60' : ''
+          }`}
+        title={isLiked ? "Already liked" : "Like this product"}
+      >
+        <FaHeart className= 'text-red-500 text-lg' />
+        <span className="absolute -bottom-1 -right-1 bg-white text-xs text-gray-700 font-semibold w-5 h-5 rounded-full flex items-center justify-center border border-gray-300">
+          {product.likes ?? 0}
+        </span>
+      </div>
 
 
       <img

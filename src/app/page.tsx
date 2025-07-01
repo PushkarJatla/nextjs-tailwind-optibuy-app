@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa'; // icons
 
 export default function RegisterPage() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
@@ -32,33 +33,45 @@ export default function RegisterPage() {
       <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4 text-center text-blue-600">Register</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            name="name"
-            type="text"
-            placeholder="Name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded"
-          />
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded"
-          />
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded"
-          />
+          <div className="flex items-center border rounded px-3 py-2">
+            <FaUser className="text-gray-500 mr-2" />
+            <input
+              name="name"
+              type="text"
+              placeholder="Name"
+              value={form.name}
+              onChange={handleChange}
+              required
+              className="w-full outline-none"
+            />
+          </div>
+
+          <div className="flex items-center border rounded px-3 py-2">
+            <FaEnvelope className="text-gray-500 mr-2" />
+            <input
+              name="email"
+              type="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={handleChange}
+              required
+              className="w-full outline-none"
+            />
+          </div>
+
+          <div className="flex items-center border rounded px-3 py-2">
+            <FaLock className="text-gray-500 mr-2" />
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+              className="w-full outline-none"
+            />
+          </div>
+
           <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
             Register
           </button>
