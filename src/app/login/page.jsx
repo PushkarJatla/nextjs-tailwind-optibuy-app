@@ -3,6 +3,8 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FaEnvelope, FaLock } from "react-icons/fa";
+import { ToastContainer, toast } from 'react-toastify';
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -21,9 +23,10 @@ export default function LoginPage() {
     });
 
     if (res.ok) {
+      toast.success("Login Successfull")
       router.push("/home");
     } else {
-      setError("Invalid email or password");
+      toast.error("Invalid email or password");
     }
   };
 
@@ -69,6 +72,8 @@ export default function LoginPage() {
           Login
         </button>
       </form>
+      <ToastContainer />
+
     </div>
   );
 }

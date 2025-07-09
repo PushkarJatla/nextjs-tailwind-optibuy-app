@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa'; // icons
+import { ToastContainer, toast } from 'react-toastify';
+
 
 export default function RegisterPage() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
@@ -21,10 +23,10 @@ export default function RegisterPage() {
     });
 
     if (res.ok) {
-      alert("Registered successfully! Please login.");
+      toast.success("Registered successfully! Please login.");
       router.push('/login');
     } else {
-      alert("Registration failed. Try again.");
+      toast.error("Registration failed. Try again.");
     }
   };
 
@@ -80,6 +82,7 @@ export default function RegisterPage() {
           Already registered? <a href="/login" className="text-blue-600 underline">Login here</a>
         </p>
       </div>
+      <ToastContainer/>
     </div>
   );
 }

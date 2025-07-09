@@ -24,10 +24,10 @@ export default function ProductCard({ product, onLike, isLiked }) {
       <img
         src={product.imageUrl}
         alt={product.name}
-        className="w-full h-56 object-cover rounded-xl shadow-md"
+        className="w-full h-70 bg-white object-contain  rounded-xl shadow-md"
       />
 
-      <h3 className="text-xl font-semibold text-gray-800 mt-4 text-center">
+      <h3 className="text-xl overflow-hidden font-semibold text-gray-800 mt-4 text-center">
         {product.name}
       </h3>
 

@@ -16,7 +16,7 @@ const roboto = Roboto({
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={roboto.className}>
-      <body>
+      <body >
         <SessionProvider>
           {children}
         </SessionProvider>

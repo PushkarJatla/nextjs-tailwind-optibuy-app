@@ -2,6 +2,10 @@
 import { useEffect, useState } from 'react';
 import ProductCard from '../components/ProductCard'
 import { useSession } from 'next-auth/react';
+import { ToastContainer, toast } from 'react-toastify';
+import Link from 'next/link';
+
+
 
 export default function HomePage() {
     const [products, setProducts] = useState([]);
@@ -17,6 +21,8 @@ export default function HomePage() {
     const [link, setLink] = useState('');
     const [imageFile, setImageFile] = useState(null);
     const [category, setCategory] = useState('');
+    const [minBudget, setMinBudget] = useState('');
+    const [maxBudget, setMaxBudget] = useState('');
 
     const categories = [
         "Shoes", "Clothing", "Utensils", "Toys", "Electronics", "Groceries",
@@ -47,9 +53,7 @@ export default function HomePage() {
 
     }, []);
 
-    const handleSearch = () => {
-        console.log(`Searching for "${query}" under ₹${budget}`);
-    };
+    
 
     const handleAddProduct = async (e) => {
         e.preventDefault();
@@ -79,14 +83,16 @@ export default function HomePage() {
                     });
 
                     if (res.ok) {
+                        toast.success("Product Added Successfully")
                         const savedProduct = await res.json();
                         console.log("✅ Product added:", savedProduct);
                         setShowModal(false);
                     } else {
-                        console.error("❌ Failed to add product:", await res.text());
+                        toast.error("Failed to add product");
                     }
                 } catch (err) {
-                    console.error("❌ Error:", err);
+                    toast.error("Something went wrong");
+                    console.log(err)
                 }
             };
 
@@ -102,7 +108,8 @@ export default function HomePage() {
             const data = await res.json();
             setProducts(data);
         } catch (error) {
-            console.error("❌ Error fetching category products:", error);
+            toast.error("Error fetching category products");
+            console.log(err)
             setProducts([]);
         }
     };
@@ -125,28 +132,31 @@ export default function HomePage() {
                 console.warn("⚠️", err.error);
             }
         } catch (err) {
-            console.error("❌ Error while liking:", err);
+            toast.error("Error while liking");
+            console.log(err)
         }
     };
-    useEffect(() => {
-        if (!budget) {
-            setProducts(allProducts); //  reset to full list
-            return;
-        }
+  useEffect(() => {
+  const min = Number(minBudget) || 0;
+  const max = Number(maxBudget) || Infinity;
 
-        const [min, max] = budget.split("-").map(Number);
+  if (!minBudget && !maxBudget) {
+    setProducts(allProducts); // show all if both empty
+    return;
+  }
 
-        const filtered = allProducts.filter((item) => {
-            return item.price >= min && item.price <= max;
-        });
+  const filtered = allProducts.filter((item) => {
+    return item.price >= min && item.price <= max;
+  });
 
-        setProducts(filtered);
-    }, [budget, allProducts]);
+  setProducts(filtered);
+}, [minBudget, maxBudget, allProducts]);
+
 
 
 
     const { data: session, status } = useSession();
-   
+
     // const userName = 
     // // console.log(session.user.name.split(" ")[0])
     console.log(session.user.name)
@@ -155,15 +165,21 @@ export default function HomePage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-emerald-50 via-green-50 to-white">
-            <header className="bg-emerald-200 shadow-md px-6 py-4 flex justify-between items-center text-green-900 font-semibold">
-                <div className="text-2xl font-bold flex items-center gap-2">
-                    <span role="img" aria-label="cart">🛒</span> OptiBuy
+            <header className="bg-emerald-200 shadow-md px-6 py-2 flex justify-between items-center text-green-900 font-semibold">
+                <div className="flex items-center gap-3">
+                    <img src="/shopping-bag.png" alt="CompareWise Logo" className="w-10 h-10 object-contain" />
+
+                    <div className="flex flex-col">
+                        <span className="text-xl font-bold text-emerald-700">CompareWise</span>
+                        <span className="text-sm font-light text-gray-500 -mt-1">Buy Smart. Save Big.</span>
+                    </div>
                 </div>
+
                 <nav className="space-x-8 text-sm md:text-base">
-                    <a href="/" className="hover:text-emerald-700 transition">Home</a>
-                    <a href="#about" className="hover:text-emerald-700 transition">About</a>
-                    <a href="#services" className="hover:text-emerald-700 transition">Services</a>
-                    <a href="#contact" className="hover:text-emerald-700 transition">Contact</a>
+                    <Link href="/home" className="hover:text-emerald-700 transition">Home</Link>
+                    <Link href="/about" className="hover:text-emerald-700 transition">About</Link>
+                    <Link href="/services" className="hover:text-emerald-700 transition">Services</Link>
+                    <Link href="/contact" className="hover:text-emerald-700 transition">Contact</Link>
                 </nav>
                 <h1>Welcome, {myName.split(" ")[0]}</h1>
             </header>
@@ -187,28 +203,26 @@ export default function HomePage() {
                         ))}
                     </select>
 
-                    <select
-                        className="w-full bg-gradient-to-r from-white via-emerald-50 to-white p-3 rounded-lg border border-emerald-200 shadow focus:outline-none focus:ring-2 focus:ring-emerald-400 text-emerald-800 font-medium transition duration-200"
-                        value={budget}
-                        onChange={(e) => setBudget(e.target.value)}
-                    >
-                        <option className="hover:bg-emerald-100" value="">💸 Select Budget</option>
-                        <option className="hover:bg-emerald-100" value="0-500">Under ₹500</option>
-                        <option className="hover:bg-emerald-100" value="500-1000">₹500 - ₹1,000</option>
-                        <option className="hover:bg-emerald-100" value="1000-2000">₹1,000 - ₹2,000</option>
-                        <option className="hover:bg-emerald-100" value="2000-3000">₹2,000 - ₹3,000</option>
-                        <option className="hover:bg-emerald-100" value="3000-5000">₹3,000 - ₹5,000</option>
-                        <option className="hover:bg-emerald-100" value="5000-10000">₹5,000 - ₹10,000</option>
-                        <option className="hover:bg-emerald-100" value="10000-100000">Above ₹10,000</option>
-                    </select>
+                    <div className="flex gap-2 w-full">
+                        <input
+                            type="number"
+                            placeholder="Min Budget ₹"
+                            className="w-full bg-gradient-to-r from-white via-emerald-50 to-white p-3 rounded-lg border border-emerald-200 shadow focus:outline-none focus:ring-2 focus:ring-emerald-400 text-emerald-800 font-medium"
+                            value={minBudget}
+                            onChange={(e) => setMinBudget(e.target.value)}
+                        />
+                        <input
+                            type="number"
+                            placeholder="Max Budget ₹"
+                            className="w-full bg-gradient-to-r from-white via-emerald-50 to-white p-3 rounded-lg border border-emerald-200 shadow focus:outline-none focus:ring-2 focus:ring-emerald-400 text-emerald-800 font-medium"
+                            value={maxBudget}
+                            onChange={(e) => setMaxBudget(e.target.value)}
+                        />
+                    </div>
 
 
-                    <button
-                        onClick={handleSearch}
-                        className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-2 rounded-full shadow hover:from-blue-600 hover:to-blue-700 transition duration-200 inline-flex items-center justify-center whitespace-nowrap"
-                    >
-                        🔍 Search
-                    </button>
+
+                   
 
                     <button
                         onClick={() => setShowModal(true)}
@@ -277,6 +291,8 @@ export default function HomePage() {
             <footer className="bg-emerald-100 text-center py-4 text-sm text-green-800 mt-auto shadow-inner">
                 © 2025 ShopCompare. All rights reserved.
             </footer>
+            <ToastContainer />
+
         </div>
 
     );
