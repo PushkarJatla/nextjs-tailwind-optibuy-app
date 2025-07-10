@@ -1,9 +1,10 @@
 "use client"
 import { useEffect, useState } from 'react';
 import ProductCard from '../components/ProductCard'
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { ToastContainer, toast } from 'react-toastify';
 import Link from 'next/link';
+import { FaUserCircle } from 'react-icons/fa';
 
 
 
@@ -12,7 +13,6 @@ export default function HomePage() {
     const [likedProducts, setLikedProducts] = useState([]);
     const [allProducts, setAllProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [budget, setBudget] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
@@ -53,7 +53,7 @@ export default function HomePage() {
 
     }, []);
 
-    
+
 
     const handleAddProduct = async (e) => {
         e.preventDefault();
@@ -136,21 +136,21 @@ export default function HomePage() {
             console.log(err)
         }
     };
-  useEffect(() => {
-  const min = Number(minBudget) || 0;
-  const max = Number(maxBudget) || Infinity;
+    useEffect(() => {
+        const min = Number(minBudget) || 0;
+        const max = Number(maxBudget) || Infinity;
 
-  if (!minBudget && !maxBudget) {
-    setProducts(allProducts); // show all if both empty
-    return;
-  }
+        if (!minBudget && !maxBudget) {
+            setProducts(allProducts); // show all if both empty
+            return;
+        }
 
-  const filtered = allProducts.filter((item) => {
-    return item.price >= min && item.price <= max;
-  });
+        const filtered = allProducts.filter((item) => {
+            return item.price >= min && item.price <= max;
+        });
 
-  setProducts(filtered);
-}, [minBudget, maxBudget, allProducts]);
+        setProducts(filtered);
+    }, [minBudget, maxBudget, allProducts]);
 
 
 
@@ -162,13 +162,19 @@ export default function HomePage() {
     console.log(session.user.name)
     const myName = session.user.name;
     // // console.log(data.user)
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+    const handleLogout = () => {
+        signOut({ callbackUrl: '/login' });
+        setDropdownOpen(false);
+    };
 
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-emerald-50 via-green-50 to-white">
-            <header className="bg-emerald-200 shadow-md px-6 py-2 flex flex-col md:flex-row  justify-between items-center text-green-900 font-semibold">
+            <header className="bg-emerald-200 shadow-md px-6 py-2 flex flex-col md:flex-row justify-between items-center text-green-900 font-semibold">
                 <div className="flex items-center gap-3">
                     <img src="/shopping-bag.png" alt="CompareWise Logo" className="w-10 h-10 object-contain" />
-
                     <div className="flex flex-col">
                         <span className="text-xl font-bold text-emerald-700">CompareWise</span>
                         <span className="text-sm font-light text-gray-500 -mt-1">Buy Smart. Save Big.</span>
@@ -181,7 +187,28 @@ export default function HomePage() {
                     <Link href="/services" className="hover:text-emerald-700 transition">Services</Link>
                     <Link href="/contact" className="hover:text-emerald-700 transition">Contact</Link>
                 </nav>
-                <h1>Welcome, {myName.split(" ")[0]}</h1>
+
+                {/* User section with dropdown */}
+                <div className="relative mt-3 md:mt-0">
+                    <div
+                        className="flex items-center gap-2 cursor-pointer"
+                        onClick={toggleDropdown}
+                    >
+                        <h1>Welcome, {myName.split(" ")[0]}</h1>
+                        <FaUserCircle size={24} className="text-emerald-700" />
+                    </div>
+
+                    {dropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-32 bg-white shadow-md rounded-md z-10">
+                            <button
+                                onClick={handleLogout}
+                                className="w-full text-left px-4 py-2 text-sm hover:bg-emerald-100"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    )}
+                </div>
             </header>
 
             <main className="flex-1 container mx-auto px-4 py-6">
@@ -222,7 +249,7 @@ export default function HomePage() {
 
 
 
-                   
+
 
                     <button
                         onClick={() => setShowModal(true)}
