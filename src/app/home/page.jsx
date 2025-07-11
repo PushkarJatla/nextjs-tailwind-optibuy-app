@@ -176,7 +176,7 @@ export default function HomePage() {
           
             <Navbar handleLogout={handleLogout} toggleDropdown={toggleDropdown} myName={myName} dropdownOpen={dropdownOpen}/>
 
-            <main className="flex-1 container mx-auto px-4 py-6">
+            <main className="flex-1 container-fluid mx-auto px-4 py-6">
                 <div className="flex flex-col md:flex-row gap-2">
                     <select
                         className="w-full bg-gradient-to-r from-white via-emerald-50 to-white p-3 rounded-lg border border-emerald-200 shadow focus:outline-none focus:ring-2 focus:ring-emerald-400 text-emerald-800 font-medium transition duration-200"
@@ -265,7 +265,7 @@ export default function HomePage() {
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 mt-6">
                     {products.map((product) => {
                         const likedProductIds = new Set(likedProducts || []);
                         return (
