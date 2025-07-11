@@ -4,6 +4,7 @@ import './globals.css';
 import { SessionProvider } from 'next-auth/react';
 import { Roboto } from 'next/font/google';
 import './globals.css';
+import AIChatButton from './components/AIChatButton';
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
       <body >
         <SessionProvider>
           {children}
+          <AIChatButton/>
         </SessionProvider>
       </body>
     </html>
