@@ -161,7 +161,6 @@ const myName = session?.user?.name || "Guest";
 
     // const userName = 
     // // console.log(session.user.name.split(" ")[0])
-    console.log(session.user.name)
     // // console.log(data.user)
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
