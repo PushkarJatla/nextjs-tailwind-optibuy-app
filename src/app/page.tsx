@@ -33,7 +33,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
       <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4 text-center bg-emerald-600">Register</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center text-emerald-600">Register</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex items-center border rounded px-3 py-2">
             <FaUser className="text-gray-500 mr-2" />
