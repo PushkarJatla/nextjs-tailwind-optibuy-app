@@ -44,7 +44,7 @@ export default function ProductCard({ product, onLike, isLiked }) {
         href={product.link}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-4 px-4 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full shadow hover:from-green-600 hover:to-green-700 transition-all duration-300"
+        className="whitespace-nowrap mt-4 px-4 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full shadow hover:from-green-600 hover:to-green-700 transition-all duration-300"
       >
         Buy on {product.site}
       </a>
