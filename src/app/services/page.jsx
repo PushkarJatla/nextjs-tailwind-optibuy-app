@@ -1,5 +1,6 @@
 "use client";
 import { FaSearch, FaStar, FaTags, FaChartBar } from "react-icons/fa";
+import Navbar from "../components/Navbar";
 
 export default function page() {
   const services = [
@@ -26,21 +27,24 @@ export default function page() {
   ];
 
   return (
-    <div className="min-h-screen px-4 py-10 bg-gray-50 text-center">
-      <h1 className="text-3xl md:text-4xl font-bold text-emerald-700 mb-10">Our Services</h1>
+  <>
+      <Navbar />
+      <div className="min-h-screen px-4 py-10 bg-gray-50 text-center">
+        <h1 className="text-3xl md:text-4xl font-bold text-emerald-700 mb-10">Our Services</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        {services.map((service, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-lg shadow-md p-6 transition hover:shadow-lg"
-          >
-            {service.icon}
-            <h2 className="text-xl font-semibold text-gray-800">{service.title}</h2>
-            <p className="text-gray-600 mt-2 text-sm">{service.desc}</p>
-          </div>
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {services.map((service, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-md p-6 transition hover:shadow-lg"
+            >
+              {service.icon}
+              <h2 className="text-xl font-semibold text-gray-800">{service.title}</h2>
+              <p className="text-gray-600 mt-2 text-sm">{service.desc}</p>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
