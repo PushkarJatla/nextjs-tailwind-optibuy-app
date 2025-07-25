@@ -36,7 +36,7 @@ export default function HomePage() {
             .then(res => res.json())
             .then(data => {
                 setProducts(data);
-                setAllProducts(data); // ✅ keep a copy of all products
+                setAllProducts(data);
             });
 
         fetch('/api/user/liked-products')
@@ -142,16 +142,18 @@ export default function HomePage() {
         const max = Number(maxBudget) || Infinity;
 
         if (!minBudget && !maxBudget) {
-            setProducts(allProducts); // show all if both empty
             return;
         }
 
-        const filtered = allProducts.filter((item) => {
+        const baseList = selectedCategory ? products : allProducts;
+
+        const filtered = baseList.filter((item) => {
             return item.price >= min && item.price <= max;
         });
 
         setProducts(filtered);
-    }, [minBudget, maxBudget, allProducts]);
+    }, [minBudget, maxBudget]);
+
 
 
 
@@ -173,8 +175,8 @@ export default function HomePage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-emerald-50 via-green-50 to-white">
-          
-            <Navbar handleLogout={handleLogout} toggleDropdown={toggleDropdown} myName={myName} dropdownOpen={dropdownOpen}/>
+
+            <Navbar handleLogout={handleLogout} toggleDropdown={toggleDropdown} myName={myName} dropdownOpen={dropdownOpen} />
 
             <main className="flex-1 container-fluid mx-auto px-4 py-6">
                 <div className="flex flex-col md:flex-row gap-2">

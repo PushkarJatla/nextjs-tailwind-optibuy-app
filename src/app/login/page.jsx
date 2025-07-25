@@ -39,26 +39,24 @@ export default function LoginPage() {
         <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
         {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
-        {/* Email with icon */}
         <div className="flex items-center border rounded px-3 py-2 mb-3">
           <FaEnvelope className="text-gray-500 mr-2" />
           <input
             type="email"
             placeholder="Email"
-            className="w-full outline-none"
+            className="w-full outline-none placeholder:text-emerald-500"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
 
-        {/* Password with icon */}
         <div className="flex items-center border rounded px-3 py-2 mb-3">
           <FaLock className="text-gray-500 mr-2" />
           <input
             type="password"
             placeholder="Password"
-            className="w-full outline-none"
+            className="w-full outline-none placeholder:text-emerald-500"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required

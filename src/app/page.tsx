@@ -44,7 +44,7 @@ export default function RegisterPage() {
               value={form.name}
               onChange={handleChange}
               required
-              className="w-full outline-none"
+              className="w-full outline-none placeholder:text-emerald-500"
             />
           </div>
 
@@ -57,7 +57,7 @@ export default function RegisterPage() {
               value={form.email}
               onChange={handleChange}
               required
-              className="w-full outline-none"
+              className="w-full outline-none placeholder:text-emerald-500"
             />
           </div>
 
@@ -70,7 +70,7 @@ export default function RegisterPage() {
               value={form.password}
               onChange={handleChange}
               required
-              className="w-full outline-none"
+              className="w-full outline-none placeholder:text-emerald-500"
             />
           </div>
 
