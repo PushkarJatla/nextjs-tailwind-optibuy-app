@@ -141,9 +141,7 @@ export default function HomePage() {
         const min = Number(minBudget) || 0;
         const max = Number(maxBudget) || Infinity;
 
-        if (!minBudget && !maxBudget) {
-            return;
-        }
+        if (!minBudget && !maxBudget) return;
 
         const baseList = selectedCategory ? products : allProducts;
 
@@ -152,7 +150,8 @@ export default function HomePage() {
         });
 
         setProducts(filtered);
-    }, [minBudget, maxBudget]);
+    }, [minBudget, maxBudget, products, selectedCategory]);
+
 
 
 
