@@ -1,53 +1,36 @@
 export const runtime = 'nodejs';
 
-import { OpenAI } from 'openai';
+const apiKey = process.env.GEMINI_API_KEY;
+const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-console.log("🔑 OpenAI API Key:", process.env.OPENAI_API_KEY ? "Loaded" : "Not Set");
 export async function POST(req) {
   try {
-    console.log("💡 Received request");
     const { message } = await req.json();
-    console.log("📝 Message received:", message);
-
-    const products = [
-      {
-        name: "boAt Rockerz 255",
-        price: 1999,
-        category: "Earphones",
-        description: "Wireless, Sweatproof, Bass-heavy",
-      },
-      {
-        name: "Realme Buds Wireless 2 Neo",
-        price: 1799,
-        category: "Earphones",
-        description: "Lightweight, 17hr battery life",
-      },
-    ];
-
-    const productInfo = products.map(p =>
-      `Name: ${p.name}, Price: ₹${p.price}, Category: ${p.category}, Description: ${p.description}`
-    ).join("\n");
 
     const prompt = `
-You are a helpful AI shopping assistant. Based on the product list below, help the user:
+You are a helpful AI shopping assistant. Answer the user's query thoughtfully.
 
-${productInfo}
+User: "${message}"
+`;
 
-User asked: "${message}"
-    `;
-
-    console.log("📦 Sending prompt to OpenAI...");
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [{ role: "user", content: prompt }],
+    const res = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              { text: prompt }
+            ]
+          }
+        ]
+      })
     });
 
-    console.log("✅ OpenAI response received");
-    const reply = completion.choices?.[0]?.message?.content || "No reply";
+    const data = await res.json();
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate a reply.";
 
     return new Response(JSON.stringify({ response: reply }), {
       status: 200,
@@ -55,17 +38,14 @@ User asked: "${message}"
     });
 
   } catch (error) {
-  console.error("🔥 AI API Error:", error);
-  return new Response(JSON.stringify({
-    error: error.message || "Internal Server Error"
-  }), {
-    status: 500,
-    headers: { "Content-Type": "application/json" }
-  });
+    console.error("🔥 AI Chat Error:", error);
+    return new Response(JSON.stringify({
+      error: error.message || "Internal Server Error"
+    }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
 }
 
-}
 
-// 👇 This disables other methods like GET, PUT, etc., so you don’t get 405
-export const GET = () =>
-  new Response(JSON.stringify({ error: "Method Not Allowed" }), { status: 405 });

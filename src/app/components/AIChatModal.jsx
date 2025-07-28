@@ -23,7 +23,7 @@ export default function AIChatModal({ onClose }) {
     });
     const data = await res.json();
     console.log("AI response:", data);
-    setMessages(prev => [...prev, { user: input }, { bot: data.response }]);
+    setMessages(prev => [...prev, { bot: data.response }]);
     setInput('');
   };
 
