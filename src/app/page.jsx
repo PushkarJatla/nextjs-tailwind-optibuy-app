@@ -1,14 +1,11 @@
 "use client"
 import { useEffect, useState } from 'react';
-import ProductCard from '../components/ProductCard'
 import { signOut, useSession } from 'next-auth/react';
 import { ToastContainer, toast } from 'react-toastify';
 import Link from 'next/link';
 import { FaUserCircle } from 'react-icons/fa';
-import Navbar from '../components/Navbar';
-
-
-
+import ProductCard from './components/ProductCard'
+import Navbar from './components/Navbar';
 export default function HomePage() {
     const [products, setProducts] = useState([]);
     const [likedProducts, setLikedProducts] = useState([]);
@@ -24,6 +21,8 @@ export default function HomePage() {
     const [category, setCategory] = useState('');
     const [minBudget, setMinBudget] = useState('');
     const [maxBudget, setMaxBudget] = useState('');
+    const [loading, setLoading] = useState(true);
+
 
     const categories = [
         "Shoes", "Clothing", "Utensils", "Toys", "Electronics", "Groceries",
@@ -31,31 +30,37 @@ export default function HomePage() {
         "Smartphones", "Kitchen Appliances", "Accessories", "Watches", "Stationery"
     ];
 
-    useEffect(() => {
-        fetch('/api/products')
-            .then(res => res.json())
-            .then(data => {
-                setProducts(data);
-                setAllProducts(data);
-            });
+   useEffect(() => {
+    const fetchData = async () => {
+        try {
+            setLoading(true); 
 
-        fetch('/api/user/liked-products')
-            .then(res => res.json())
-            .then(data => {
-                console.log("✅ liked-products response:", data);
-                const liked = Array.isArray(data)
-                    ? data
-                    : Array.isArray(data.liked)
-                        ? data.liked
-                        : [];
+            const productRes = await fetch('/api/products');
+            const productData = await productRes.json();
+            setProducts(productData);
+            setAllProducts(productData);
 
-                setLikedProducts(liked);
-            });
+            const likedRes = await fetch('/api/user/liked-products');
+            const likedData = await likedRes.json();
 
-    }, []);
+            console.log("liked-products response:", likedData);
 
+            const liked = Array.isArray(likedData)
+                ? likedData
+                : Array.isArray(likedData.liked)
+                    ? likedData.liked
+                    : [];
 
+            setLikedProducts(liked);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setLoading(false); 
+        }
+    };
 
+    fetchData();
+}, []);
     const handleAddProduct = async (e) => {
         e.preventDefault();
 
@@ -138,38 +143,28 @@ export default function HomePage() {
         }
     };
 
-useEffect(() => {
-    const min = Number(minBudget) || 0;
-    const max = Number(maxBudget) || Infinity;
+    useEffect(() => {
+        const min = Number(minBudget) || 0;
+        const max = Number(maxBudget) || Infinity;
 
-    if (!minBudget && !maxBudget) return;
+        if (!minBudget && !maxBudget) return;
 
-    const handler = setTimeout(() => {
-        const baseList = selectedCategory ? products : allProducts;
+        const handler = setTimeout(() => {
+            const baseList = selectedCategory ? products : allProducts;
 
-        const filtered = baseList.filter((item) => {
-            return item.price >= min && item.price <= max;
-        });
+            const filtered = baseList.filter((item) => {
+                return item.price >= min && item.price <= max;
+            });
 
-        setProducts(filtered);
-    }, 800);
+            setProducts(filtered);
+        }, 800);
 
-    return () => clearTimeout(handler);
-}, [minBudget, maxBudget, products, selectedCategory]);
-
-
-
-
-
-
+        return () => clearTimeout(handler);
+    }, [minBudget, maxBudget, products, selectedCategory]);
 
     const { data: session, status } = useSession();
+    const myName = session?.user?.name;
 
-    const myName = session?.user?.name || "Guest";
-
-    // const userName = 
-    // // console.log(session.user.name.split(" ")[0])
-    // // console.log(data.user)
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
@@ -219,18 +214,12 @@ useEffect(() => {
                         />
                     </div>
 
-
-
-
-
                     <button
                         onClick={() => setShowModal(true)}
                         className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-5 py-2 rounded-full shadow hover:from-green-600 hover:to-emerald-700 transition duration-200 inline-flex items-center justify-center whitespace-nowrap"
                     >
                         ➕ Add Product
                     </button>
-
-
                 </div>
 
                 {showModal && (
@@ -272,19 +261,26 @@ useEffect(() => {
                     </div>
                 )}
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 mt-6">
-                    {products.map((product) => {
-                        const likedProductIds = new Set(likedProducts || []);
-                        return (
-                            <ProductCard
-                                key={product.id}
-                                product={product}
-                                onLike={() => handleLike(product.id)}
-                                isLiked={likedProductIds.has(product.id)}
-                            />
-                        );
-                    })}
-                </div>
+                {loading ? (
+                    <div className="flex justify-center items-center h-64">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-emerald-500 border-solid"></div>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 mt-6">
+                        {products.map((product) => {
+                            const likedProductIds = new Set(likedProducts || []);
+                            return (
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                    onLike={() => handleLike(product.id)}
+                                    isLiked={likedProductIds.has(product.id)}
+                                />
+                            );
+                        })}
+                    </div>
+                )}
+
             </main>
 
             <footer className="bg-emerald-100 text-center py-4 text-sm text-green-800 mt-auto shadow-inner">

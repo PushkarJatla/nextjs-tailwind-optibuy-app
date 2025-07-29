@@ -8,13 +8,16 @@ import { ToastContainer, toast } from 'react-toastify';
 export default function RegisterPage() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const res = await fetch('/api/register', {
       method: 'POST',
@@ -28,7 +31,10 @@ export default function RegisterPage() {
     } else {
       toast.error("Registration failed. Try again.");
     }
+
+    setLoading(false);
   };
+
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
@@ -74,15 +80,45 @@ export default function RegisterPage() {
             />
           </div>
 
-          <button type="submit" className="w-full bg-emerald-600 text-white py-2 rounded hover:bg-emerald-700">
-            Register
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full text-white py-2 rounded ${loading
+                ? 'bg-emerald-400 cursor-not-allowed'
+                : 'bg-emerald-600 hover:bg-emerald-700'
+              }`}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <svg className="animate-spin h-5 w-5 text-white mr-2" viewBox="0 0 24 24">
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
+                </svg>
+                Registering...
+              </div>
+            ) : (
+              'Register'
+            )}
           </button>
+
         </form>
         <p className="text-center mt-4 text-sm">
           Already registered? <a href="/login" className="text-emerald-600 underline">Login here</a>
         </p>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 }
