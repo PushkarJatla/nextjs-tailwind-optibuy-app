@@ -137,12 +137,14 @@ export default function HomePage() {
             console.log(err)
         }
     };
-    useEffect(() => {
-        const min = Number(minBudget) || 0;
-        const max = Number(maxBudget) || Infinity;
 
-        if (!minBudget && !maxBudget) return;
+useEffect(() => {
+    const min = Number(minBudget) || 0;
+    const max = Number(maxBudget) || Infinity;
 
+    if (!minBudget && !maxBudget) return;
+
+    const handler = setTimeout(() => {
         const baseList = selectedCategory ? products : allProducts;
 
         const filtered = baseList.filter((item) => {
@@ -150,7 +152,11 @@ export default function HomePage() {
         });
 
         setProducts(filtered);
-    }, [minBudget, maxBudget, products, selectedCategory]);
+    }, 800);
+
+    return () => clearTimeout(handler);
+}, [minBudget, maxBudget, products, selectedCategory]);
+
 
 
 
