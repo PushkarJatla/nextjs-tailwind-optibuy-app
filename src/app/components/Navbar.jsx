@@ -49,7 +49,7 @@ const Navbar = ({ handleLogout, toggleDropdown, myName, dropdownOpen }) => {
 
                 {/* Navigation Links */}
                 <nav className="mt-4 md:mt-0 flex justify-center md:justify-end space-x-6 text-sm md:text-base">
-                    <Link href="/home" className="hover:text-emerald-700 transition">Home</Link>
+                    <Link href="/" className="hover:text-emerald-700 transition">Home</Link>
                     <Link href="/about" className="hover:text-emerald-700 transition">About</Link>
                     <Link href="/services" className="hover:text-emerald-700 transition">Services</Link>
                     <Link href="/contact" className="hover:text-emerald-700 transition">Contact</Link>
